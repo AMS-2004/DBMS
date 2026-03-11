@@ -1,0 +1,224 @@
+Your image shows a **DBMS SQL lab (Experiment-5)** where you must create tables and write queries for the given schema.
+I'll give you **SQL table creation + sample queries for the questions**.
+
+---
+
+# 1. Create Tables
+
+```sql
+CREATE TABLE Physician(
+Phy_ID INT PRIMARY KEY,
+Phy_fname VARCHAR(20),
+Phy_Lname VARCHAR(20),
+address VARCHAR(50),
+salary INT,
+Degree VARCHAR(20)
+);
+
+CREATE TABLE Physician_Speciality(
+Phy_ID INT,
+Field VARCHAR(30),
+FOREIGN KEY (Phy_ID) REFERENCES Physician(Phy_ID)
+);
+
+CREATE TABLE Nurse(
+Nurse_id INT PRIMARY KEY,
+nurse_fname VARCHAR(20),
+nurse_Lname VARCHAR(20),
+shift VARCHAR(10)
+);
+
+CREATE TABLE Ward(
+ward_no INT PRIMARY KEY,
+ward_name VARCHAR(20),
+No_of_beds INT,
+Nurse_id INT,
+phone_no VARCHAR(15),
+FOREIGN KEY (Nurse_id) REFERENCES Nurse(Nurse_id)
+);
+
+CREATE TABLE Patient(
+pat_ID INT PRIMARY KEY,
+pat_fname VARCHAR(20),
+pat_Lname VARCHAR(20),
+Age INT,
+phy_id INT,
+Ward_num INT,
+admit_date DATE,
+FOREIGN KEY (phy_id) REFERENCES Physician(Phy_ID),
+FOREIGN KEY (Ward_num) REFERENCES Ward(ward_no)
+);
+```
+
+---
+
+# 2. Queries
+
+### 1. Patient number and ward number
+
+```sql
+SELECT pat_ID, Ward_num
+FROM Patient;
+```
+
+---
+
+### 2. Patient name and physician for patients assigned to any ward
+
+```sql
+SELECT p.pat_fname, p.pat_Lname, ph.Phy_fname
+FROM Patient p
+JOIN Physician ph ON p.phy_id = ph.Phy_ID
+WHERE p.Ward_num IS NOT NULL;
+```
+
+---
+
+### 3. Patients whose first name starts with 'D' treated by physician "Sreekumar"
+
+```sql
+SELECT p.*
+FROM Patient p
+JOIN Physician ph ON p.phy_id = ph.Phy_ID
+WHERE p.pat_fname LIKE 'D%'
+AND ph.Phy_fname = 'Sreekumar';
+```
+
+---
+
+### 4. Add new patient
+
+```sql
+INSERT INTO Patient
+VALUES (101,'Rahul','Kumar',45,1,2,'2025-03-10');
+```
+
+Display nurse in charge:
+
+```sql
+SELECT n.*
+FROM Patient p
+JOIN Ward w ON p.Ward_num = w.ward_no
+JOIN Nurse n ON w.Nurse_id = n.Nurse_id
+WHERE p.pat_ID = 101;
+```
+
+---
+
+### 5. Physicians earning more than 50000
+
+```sql
+SELECT *
+FROM Physician
+WHERE salary > 50000;
+```
+
+---
+
+### 6. Unique areas of specialization
+
+```sql
+SELECT DISTINCT Field
+FROM Physician_Speciality;
+```
+
+---
+
+### 7. Physicians whose specialization length < 5
+
+```sql
+SELECT *
+FROM Physician_Speciality
+WHERE LENGTH(Field) < 5;
+```
+
+---
+
+### 8. Physician names and monthly salary
+
+```sql
+SELECT Phy_fname, Phy_Lname, salary
+FROM Physician;
+```
+
+---
+
+### 9. Physicians whose first name has 5 letters
+
+```sql
+SELECT *
+FROM Physician
+WHERE LENGTH(Phy_fname) = 5;
+```
+
+---
+
+### 10. Departments not starting with 'P'
+
+```sql
+SELECT Field
+FROM Physician_Speciality
+WHERE Field NOT LIKE 'P%';
+```
+
+---
+
+### 11. All nurses with their shift
+
+```sql
+SELECT nurse_fname, nurse_Lname, shift
+FROM Nurse;
+```
+
+---
+
+### 12. Patients >60 treated by cardiologist
+
+```sql
+SELECT p.*
+FROM Patient p
+JOIN Physician_Speciality ps ON p.phy_id = ps.Phy_ID
+WHERE p.Age > 60
+AND ps.Field = 'Cardiology';
+```
+
+---
+
+### 13. Ward names with more than 25 beds
+
+```sql
+SELECT ward_name
+FROM Ward
+WHERE No_of_beds > 25;
+```
+
+---
+
+### 14. Names of admitted patients, physician name and ward name
+
+```sql
+SELECT p.pat_fname, ph.Phy_fname, w.ward_name
+FROM Patient p
+JOIN Physician ph ON p.phy_id = ph.Phy_ID
+JOIN Ward w ON p.Ward_num = w.ward_no;
+```
+
+---
+
+### 15. Doctors grouped by number of patients
+
+```sql
+SELECT ph.Phy_fname, COUNT(p.pat_ID) AS Total_Patients
+FROM Physician ph
+LEFT JOIN Patient p ON ph.Phy_ID = p.phy_id
+GROUP BY ph.Phy_fname;
+```
+
+---
+
+✅ If you want, I can also give:
+
+* **Sample INSERT data for all tables (so your queries actually run in lab)**
+* **ER Diagram for this schema**
+* **Simplified SQL version for exams** (teachers prefer that).
+
